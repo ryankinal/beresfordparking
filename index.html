@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Beresford Rd. Parking</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+		<style type="text/css">
+			body {
+				font-family: sans-serif;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			h2 {
+				margin: 0 auto;
+				letter-spacing: -1px;
+				max-width: 600px;
+				margin-bottom: 30px;
+				text-align: center;
+			}
+
+			em {
+				color: #D00;
+			}
+
+			table {
+				margin: 0 auto;
+				width: 100%;
+				max-width: 600px;
+				border-collapse: collapse;
+				position: relative;
+			}
+
+			td {
+				width: 10%;
+				padding-top: 5%;
+				padding-bottom: 5%;
+				margin: 0;
+				background-color: rgba(0, 150, 0, 0.4);
+				border: solid black;
+				border-width: 1px 0;
+				position: relative;
+			}
+
+			thead td {
+				background-color: white;
+				padding: 10px;
+			}
+
+			tfoot td {
+				height: 0;
+				padding: 0;
+				border: 0;
+			}
+
+			.near {
+				background-color: rgba(0, 200, 0, 0.8);
+			}
+
+			.day {
+				background-color: rgba(255, 255, 255, 1);
+				position: relative;
+				border-right: solid black 1px;
+			}
+
+			.day span {
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				right: 5px;
+				font-size: 25px;
+			}
+
+			.purge {
+				background-color: rgba(0, 0, 0, 0.6);
+				border: solid black;
+				border-width: 0 3px;
+			}
+
+			tbody tr:last-child .purge {
+				border-bottom-width: 3px;
+			}
+
+			thead tr td {
+				border-top-width: 0;
+			}
+
+			tfoot td {
+				background-color: transparent;
+			}
+
+			.purge-start
+			{
+				text-align: right;
+				border-right: solid 3px black;
+			}
+
+			.purge-end
+			{
+				text-align: left;
+				border-left: solid 3px black;
+			}
+
+			thead .purge {
+				border-top: solid 3px black;
+			}
+
+			#userPosition {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				white-space: nowrap;
+				font-size: 28px;
+				color: #FFF;
+			}
+
+			#parkingText {
+				margin-left: 3px;
+			}
+
+			.changeover-text {
+				color: #888;
+				font-size: 0.8em;
+			}
+
+			.show-mobile {
+				display: none;
+			}
+
+			@media (max-width: 375px)
+			{
+				.show-mobile {
+					display: inline;
+				}
+
+				#userPosition {
+					font-size: 20px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<h2>You should park <br class="show-mobile">on the <em id="parkingText"></em></h2>
+		<table>
+			<thead>
+				<tr>
+					<td></td>
+					<td colspan="5" class="purge-start">6:00 PM</td>
+					<td class="purge"></td>
+					<td colspan="3" class="purge-end">7:00 PM</td>
+				</tr>
+			</thead>
+			<tfoot>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tfoot>
+			<tbody>
+				<tr>
+					<td class="day"><span>S</span></td>
+					<td class="near" colspan="5"><div id="userPosition"><span class="glyphicon glyphicon-screenshot"></span></div></td>
+					<td class="near"></td>
+					<td class="near" colspan="3"></td>
+				</tr>
+				<tr>
+					<td class="day"><span>M</span></td>
+					<td class="near" colspan="5"></td>
+					<td class="purge"></td>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td class="day"><span>T</span></td>
+					<td colspan="5"></td>
+					<td class="purge"></td>
+					<td class="near" colspan="3"></td>
+				</tr>
+				<tr>
+					<td class="day"><span>W</span></td>
+					<td class="near" colspan="5"></td>
+					<td class="purge"></td>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td class="day"><span>T</span></td>
+					<td colspan="5"></td>
+					<td class="purge"></td>
+					<td class="near" colspan="3"></td>
+				</tr>
+				<tr>
+					<td class="day"><span>F</span></td>
+					<td class="near" colspan="5"></td>
+					<td class="purge"></td>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td class="day"><span>S</span></td>
+					<td colspan="5"></td>
+					<td class="purge"></td>
+					<td class="near" colspan="3"></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<script type="text/javascript">
+			(function() {
+				var today = new Date(), // '2019-04-15 19:00:00'
+					day = today.getDay(),
+					hour = today.getHours(),
+					cell,
+					rows,
+					cells,
+					parking,
+					tBody = document.querySelector('tbody'),
+					tHead = document.querySelector('thead'),
+					headHeight = tHead.offsetHeight,
+					bodyHeight = tBody.offsetHeight,
+					cellHeight = bodyHeight / 7,
+					dayPosition = cellHeight * day + cellHeight / 2 + headHeight - 8,
+					bodyWidth = tBody.offsetWidth,
+					cellWidth = bodyWidth / 10,
+					timeWidth = (bodyWidth - cellWidth) / 24,
+					timePosition = timeWidth * hour + timeWidth / 2 + cellWidth,
+					userPosition = document.getElementById('userPosition'),
+					parkingText = document.getElementById('parkingText');
+
+				if (day === 0)
+				{
+					parking = 'near';
+				}
+				else
+				{
+					if (hour < 18)
+					{
+						parking = (day % 2 === 1) ? 'near' : 'far';
+					}
+					else if (hour >= 18)
+					{
+						parking = (day % 2 === 1) ? 'far' : 'near';
+					}
+				}
+
+				parking += ' side';
+
+				if (hour === 18)
+				{
+					if (day !== 0)
+					{
+						parking += '<br><span class="changeover-text">But you\'re okay <br class="show-mobile">until 7:00 if you\'re not.</span>';	
+					}
+					
+					cell = 2;
+				}
+				else if (hour < 18)
+				{
+					cell = 1;
+				}
+				else if (hour > 18)
+				{
+					cell = 3;
+				}
+
+				parkingText.innerHTML = parking;
+
+				rows = tBody.querySelectorAll('tr');
+				rows[day].querySelectorAll('td')[cell].appendChild(userPosition);
+			})();
+		</script>
+	</body>
+</html>
